@@ -9,7 +9,7 @@ var stateDefault = {
 }
 var reducer = (state = stateDefault, action) => {
   switch (action.type) {
-    case 'CHANGE_SEARCHTEXT':
+    case 'CHANGE_SEARCH_TEXT':
       return {
         ...state,
         searchText: action.searchText
@@ -20,13 +20,22 @@ var reducer = (state = stateDefault, action) => {
 }
 
 
-var store = redux.createStore(reducer)
-var currentState = store.getState()
-console.log(currentState);
+var store = redux.createStore(reducer, redux.compose(
+  window.devToolsExtension ? window.devToolsExtension() : f => f
+))
 
-store.dispatch({
-  type: 'CHANGE_SEARCHTEXT',
-  searchText: "something interesting"
+var unsubscribe = store.subscribe(() =>{
+  var state = store.getState()
+  console.log(state.searchText);
+  document.getElementById('app').innerHTML = state.searchText
 })
 
-console.log('shoud show something interesting', store.getState());
+
+store.dispatch({
+  type: 'CHANGE_SEARCH_TEXT',
+  searchText: "something interesting"
+})
+store.dispatch({
+  type: 'CHANGE_SEARCH_TEXT',
+  searchText: "something else"
+})
